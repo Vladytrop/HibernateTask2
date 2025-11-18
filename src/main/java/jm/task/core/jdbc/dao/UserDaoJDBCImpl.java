@@ -2,7 +2,10 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.sql.Select;
+import org.jboss.logging.Logger;
 
 import java.io.Reader;
 import java.sql.*;
@@ -13,8 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class UserDaoJDBCImpl implements UserDao {
+    Configuration configuration = new Configuration();
     private Connection connection;
-
+    private static final Logger logger = LoggerFactory.logger(UserDaoJDBCImpl.class);
 
     public UserDaoJDBCImpl() {
         this.connection = Util.getConnection();
@@ -28,7 +32,7 @@ public class UserDaoJDBCImpl implements UserDao {
                             " age TINYINT)");
                     state.executeUpdate(sql);
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating table", e);
+            logger.error("Ошибка создания таблицы " + e);
         }
     }
 
@@ -36,7 +40,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement state = connection.createStatement()) {
             state.executeUpdate("DROP TABLE IF EXISTS users");
         } catch (SQLException e) {
-            throw new RuntimeException("Error dropping table", e);
+            logger.error("Ошибка удаления таблицы " + e);
         }
     }
 
@@ -47,9 +51,9 @@ public class UserDaoJDBCImpl implements UserDao {
             ps.setString(2, lastName);
             ps.setByte(3, age);
             ps.executeUpdate();
-            System.out.println("User с именем - " + name + " добавлен в базу данных");
+            logger.info("Пользователь добавлен в базу данных " + name);
         } catch (SQLException e) {
-            throw new RuntimeException("Error saving user", e);
+            logger.error("Ошибка добавления пользователя " + e);
         }
     }
 
@@ -58,14 +62,13 @@ public class UserDaoJDBCImpl implements UserDao {
             ps.setLong(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting user", e);
+            logger.error("Ошибка удаления пользователя по id " + e);
         }
     }
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (Statement state = connection.createStatement()) {
-            ResultSet rs = state.executeQuery("SELECT * FROM users");
+        try (ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM users")) {
             while (rs.next()) {
                 long id = rs.getLong("id");
                 String name = rs.getString("name");
@@ -74,7 +77,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 users.add(new User(id, name, lastName, age));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error getting all users", e);
+            logger.error("Ошибка получения всех пользователей " + e);
         }
         return users;
     }
@@ -83,7 +86,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement state = connection.createStatement()) {
             state.executeUpdate("DELETE FROM users");
         } catch (SQLException e) {
-            throw new RuntimeException("Error cleaning table", e);
+            logger.error("Ошибка очистки таблицы " + e);
         }
     }
 }

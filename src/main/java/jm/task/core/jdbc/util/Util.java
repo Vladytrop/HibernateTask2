@@ -1,5 +1,7 @@
 package jm.task.core.jdbc.util;
 
+import org.hibernate.annotations.common.util.impl.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,6 +9,7 @@ import java.sql.SQLException;
 public class Util {
     // реализуйте настройку соединения с БД
     Connection connection;
+
     public Util() {
         this.connection = Util.getConnection();
     }
