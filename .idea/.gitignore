@@ -8,3 +8,89 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Classes
+*.class
+*.war
+*.ear
+*.jar
+*.log
+
+# Local Spring Boot config
+application-local.properties
+application-local.yml
+
+# Sensitive application configs
+application-*.yml
+application-*.yaml
+application-*.properties
+
+# Except default template
+!application-example.yml
+
+# Docker volumes
+docker-data/
+docker/
+*.pid
+
+# Docker Compose override (local only)
+docker-compose.override.yml
+
+# Local K8s manifests
+k8s-local/
+*.kube/
+
+# Minikube
+.minikube/
+
+# Kafka local data
+kafka-data/
+zookeeper-data/
+
+# MySQL dumps
+*.sql
+*.dump
+
+# H2 / SQLite
+*.db
+*.mv.db
+*.trace.db
+
+*.env
+.env.*
+!env-example
+
+*.log
+logs/
+tmp/
+temp/
+.cache/
+*.swp
