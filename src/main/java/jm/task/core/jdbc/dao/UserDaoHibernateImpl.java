@@ -8,8 +8,13 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDaoHibernateImpl implements UserDao {
+
+    private static final Logger logger = Logger.getLogger(UserDaoHibernateImpl.class.getName());
+
     public UserDaoHibernateImpl() {
     }
 
@@ -23,9 +28,14 @@ public class UserDaoHibernateImpl implements UserDao {
                     " name VARCHAR(255)," +
                     " lastname VARCHAR(255)," +
                     " age TINYINT)").executeUpdate();
+            Object table = session.createSQLQuery("show tables").getResultList();
+            System.out.println(table);
+            Long count = session.createQuery("select count(*) from User", Long.class).getSingleResult();
+            System.out.println(count);
             transaction.commit();
+            System.out.println("Table created successfully");
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Ошибка при создании таблицы", e);
         }
     }
 
@@ -36,7 +46,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("DROP TABLE IF EXISTS users").executeUpdate();
             transaction.commit();
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Ошибка при удалении таблицы",e);
         }
     }
 
@@ -48,7 +58,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.save(user);
             transaction.commit();
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Ошибка при добавлении пользователя",e);
         }
     }
 
@@ -62,7 +72,7 @@ public class UserDaoHibernateImpl implements UserDao {
             }
             transaction.commit();
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Ошибка при удалении пользователя",e);
         }
     }
 
@@ -70,13 +80,14 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            List users = session.createQuery("FROM User", User.class)
+            List<User> users = session.createQuery("FROM User", User.class)
                     .getResultList();
             transaction.commit();
             return users;
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Ошибка при получении списка пользователей",e);
         }
+        return List.of();
     }
 
     @Override
@@ -87,7 +98,7 @@ public class UserDaoHibernateImpl implements UserDao {
                     .executeUpdate();
             transaction.commit();
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, "Ошибка при очистке таблицы",e);
         }
     }
 }
